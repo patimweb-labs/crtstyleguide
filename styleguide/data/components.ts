@@ -183,6 +183,32 @@ export const componentDocs: ComponentDoc[] = [
     ],
   },
   {
+    id: 'clock',
+    name: 'Clock',
+    tag: 'crt-clock',
+    category: 'basics',
+    description: 'Retro digital clock with flickering colon.',
+    props: [
+      { name: 'hour12', type: 'boolean', default: 'false', description: 'Use 12h format.' },
+    ],
+    examples: [
+      {
+        title: 'Digital Clock',
+        description: 'Real-time time display.',
+        preview: html`
+          <div style="display:flex;gap:24px;align-items:center;">
+            <crt-clock></crt-clock>
+            <crt-clock hour12></crt-clock>
+          </div>
+        `,
+        code: code(
+          '<crt-clock></crt-clock>',
+          '<crt-clock hour12></crt-clock>'
+        ),
+      },
+    ],
+  },
+  {
     id: 'input',
     name: 'Input',
     tag: 'crt-input',
@@ -1492,6 +1518,46 @@ TIME HAS LEFT WITHOUT A TRACE`
     ],
     events: [
       { name: 'track-change', detail: '{ index: number }', description: 'Fired when the current track changes.' },
+    ],
+  },
+  {
+    id: 'boot-sequence',
+    name: 'Boot Sequence',
+    tag: 'crt-boot-sequence',
+    category: 'crt',
+    description: 'Animated BIOS boot sequence simulation with Patimwep branding.',
+    examples: [
+      {
+        title: 'BIOS Boot',
+        description: 'Simulates a terminal startup. Click the button to trigger it.',
+        preview: html`
+          <crt-boot-sequence id="demo-boot" style="display: none;"></crt-boot-sequence>
+          <crt-button 
+            @click=${(e: Event) => {
+              const root = (e.currentTarget as HTMLElement).parentElement;
+              const boot = root?.querySelector('#demo-boot') as any;
+              if (boot) {
+                boot.style.display = 'block';
+                boot.start();
+                boot.addEventListener('complete', () => {
+                   boot.style.display = 'none';
+                }, { once: true });
+              }
+            }}
+          >
+            RUN BIOS BOOT
+          </crt-button>
+        `,
+        code: code(
+          '<crt-boot-sequence id="my-boot" style="display: none;"></crt-boot-sequence>',
+          '<crt-button @click=${() => document.getElementById("my-boot").style.display = "block"}>',
+          '  RUN BOOT',
+          '</crt-button>'
+        ),
+      },
+    ],
+    events: [
+      { name: 'complete', description: 'Fired when the sequence finishes and is ready to hide.' },
     ],
   },
 ];

@@ -15,6 +15,7 @@ import '../src/components/atoms/tabs';
 import '../src/components/atoms/input';
 import '../src/components/atoms/icon';
 import '../src/components/atoms/link';
+import '../src/components/atoms/clock';
 import '../src/components/atoms/search';
 import '../src/components/atoms/file-upload';
 import '../src/components/atoms/file-input';
@@ -45,6 +46,7 @@ import '../src/components/molecules/navbar';
 import '../src/components/molecules/header';
 import '../src/components/molecules/footer';
 import '../src/components/molecules/crt-overlay';
+import '../src/components/molecules/boot-sequence';
 import '../src/components/molecules/log';
 import '../src/components/organisms/music-station';
 
@@ -60,6 +62,75 @@ customElements.whenDefined('crt-button').then(() => {
   const root = document.getElementById('app');
   if (root) {
     render(styleGuideTemplate(), root);
+
+    // IntersectionObserver for active sidebar links
+    const observerOptions = {
+      root: null,
+      rootMargin: '-10% 0px -80% 0px',
+      threshold: 0
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.id;
+          document.querySelectorAll('.sg-sidebar a').forEach(link => {
+            link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
+          });
+        }
+      });
+    }, observerOptions);
+
+    // Observe all sections and components
+    document.querySelectorAll('.sg-section, .sg-component').forEach(el => observer.observe(el));
+
+    // Smooth scroll for sidebar links
+    document.querySelectorAll('.sg-sidebar a').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const href = link.getAttribute('href');
+        if (href) {
+          const target = document.querySelector(href);
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            history.pushState(null, '', href);
+          }
+        }
+        
+        // Close sidebar on mobile after click
+        if (window.innerWidth <= 1024) {
+          document.body.classList.remove('sidebar-open');
+        }
+      });
+    });
+
+    // Mobile Menu Toggle
+    const mobileMenu = document.getElementById('sg-mobile-menu');
+    if (mobileMenu) {
+      mobileMenu.addEventListener('click', () => {
+        document.body.classList.toggle('sidebar-open');
+      });
+    }
+
+    // Back to Top functionality
+    const backToTop = document.getElementById('sg-back-to-top');
+    if (backToTop) {
+      backToTop.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        // Also ensure body/html scroll (some browsers prefer one or the other)
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
+      });
+
+      // Show/hide button on scroll
+      window.addEventListener('scroll', () => {
+        if (window.pageYOffset > 300) {
+          backToTop.style.display = 'block';
+        } else {
+          backToTop.style.display = 'none';
+        }
+      }, { passive: true });
+    }
 
     // Attach a demo async fetcher to the search demo (simulated server)
     setTimeout(() => {
@@ -131,6 +202,24 @@ customElements.whenDefined('crt-button').then(() => {
         const active = e.detail.active;
         if (globalOverlay) {
           globalOverlay.active = active;
+        }
+      });
+
+      // Synchronize FLICKER toggle with overlay properties
+      document.addEventListener('change', (e: any) => {
+        const target = e.target as HTMLElement;
+        // Check for crt-toggle or the internal input if event is composed
+        const toggle = target.closest('crt-toggle');
+        if (toggle && toggle.getAttribute('label') === 'FLICKER') {
+          const isFlickerActive = toggle.checked;
+          console.log('Flicker toggle changed:', isFlickerActive);
+          document.documentElement.classList.toggle('no-flicker', !isFlickerActive);
+          if (globalOverlay) {
+            globalOverlay.flicker = isFlickerActive;
+            globalOverlay.scanlines = isFlickerActive;
+            // Also force a re-render if needed, though Lit should handle it
+            globalOverlay.requestUpdate();
+          }
         }
       });
 

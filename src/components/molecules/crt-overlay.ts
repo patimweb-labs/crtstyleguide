@@ -429,6 +429,7 @@ export class CRTOverlay extends LitElement {
       ${this.vignette && showEffects ? html`<div class="${vignetteClass}"></div>` : ''}
       ${this.scanlines && showEffects ? html`<div class="${scanlineClass}"></div>` : ''}
       ${this.scanlines && showEffects ? html`<div class="${scanLineClass}"></div>` : ''}
+      ${this.scanlines && showEffects ? html`<div class="scanline-roll"></div>` : ''}
       ${this.flicker && showEffects ? html`<div class="${flickerClass}"></div>` : ''}
       ${showPowerAnimation ? html`
         <div class="power-container ${this._powerState}">

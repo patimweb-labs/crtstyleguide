@@ -130,7 +130,9 @@ export class Toggle extends LitElement {
     const input = e.target as HTMLInputElement;
     this.checked = input.checked;
     this.dispatchEvent(new CustomEvent('change', {
-      detail: { checked: this.checked }
+      detail: { checked: this.checked },
+      bubbles: true,
+      composed: true
     }));
   }
 

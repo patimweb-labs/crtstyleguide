@@ -129,6 +129,10 @@ export const styleGuideTemplate = () => html`
   <!-- Global CRT Overlay - controlled by header power button -->
   <crt-overlay id="global-crt-overlay" .active=${false}></crt-overlay>
   
+  <button id="sg-mobile-menu" class="sg-mobile-toggle">
+    <crt-icon name="menu"></crt-icon>
+  </button>
+
   <div class="sg-wrapper">
     <div class="sg-container">
       <div class="sg-layout">
@@ -161,7 +165,8 @@ export const styleGuideTemplate = () => html`
           <crt-header class="sg-header" title="CRT LIVING STYLE GUIDE">
             <span slot="title">CRT LIVING STYLE GUIDE</span>
             <span slot="subtitle">Component Library · Lit Web Components · Atomic Design</span>
-            <div slot="actions">
+            <div slot="actions" class="sg-header-actions">
+              <crt-toggle label="FLICKER" checked @change=${(e: any) => document.documentElement.classList.toggle('no-flicker', !e.target.checked)}></crt-toggle>
               <crt-search placeholder="Search styleguide..." style="width:240px;"></crt-search>
             </div>
           </crt-header>
@@ -170,7 +175,7 @@ export const styleGuideTemplate = () => html`
               <section id="${category.id}" class="sg-section">
                 <div class="sg-section-header">
                   <crt-heading level="2">${category.label}</crt-heading>
-                  ${category.description ? html`<crt-text muted>${category.description}</crt-text>` : ''}
+                  ${category.description ? html`<crt-text muted typewriter>${category.description}</crt-text>` : ''}
                 </div>
                 ${componentDocs
                   .filter((component) => component.category === category.id)
@@ -188,4 +193,14 @@ export const styleGuideTemplate = () => html`
       </div>
     </div>
   </div>
+
+  <crt-button 
+    id="sg-back-to-top" 
+    class="sg-back-top" 
+    icon-left="arrow-up"
+    style="display: none;"
+  >
+    TOP
+  </crt-button>
+</div>
 `;
