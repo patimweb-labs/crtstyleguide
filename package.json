@@ -55,7 +55,7 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Smotherer007/crtstyleguide.git"
+    "url": "https://github.com/patimweb-labs/crtstyleguide.git"
   },
   "homepage": "https://smotherer007.github.io/crtstyleguide/",
   "publishConfig": {
